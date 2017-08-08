@@ -7,7 +7,7 @@ const interpolationFactor = require('./interpolation_factor');
 const bezier = require('bezier-easing');
 const {parseType, NumberType, ObjectType} = require('./types');
 const {Color, typeOf, isValue} = require('./values');
-const {match} = require('./expression');
+const {checkSubtype} = require('./expression');
 
 import type { Type } from './types';
 import type { Value } from './values';
@@ -73,7 +73,7 @@ module.exports = () => ({
         // assertions, check that the value is a non-null instance of the
         // expected type.
         const typeError = (value === null && expectedType.name !== 'Null') ||
-            match(expectedType, type);
+            checkSubtype(expectedType, type);
         ensure(!typeError, `Expected ${name || 'value'} to be of type ${expectedType.name}, but found ${type.name} instead.`);
         return value;
     },

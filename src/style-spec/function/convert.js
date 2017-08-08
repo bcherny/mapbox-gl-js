@@ -115,7 +115,8 @@ function convertZoomAndPropertyFunction(parameters, propertySpec) {
     const expression = ['curve', interpolationType, ['zoom']];
 
     for (const z of zoomStops) {
-        expression.push(z, convertPropertyFunction(featureFunctions[z], propertySpec));
+        expression.push(z);
+        expression.push(convertPropertyFunction(featureFunctions[z], propertySpec));
     }
 
     return expression;
@@ -152,7 +153,8 @@ function convertPropertyFunction(parameters, propertySpec) {
     ]);
 
     for (const stop of parameters.stops) {
-        expression.push(stop[0], stop[1]);
+        expression.push(stop[0]);
+        expression.push(stop[1]);
     }
 
     if (expression[0] === 'match') {
@@ -175,7 +177,8 @@ function convertZoomFunction(parameters, propertySpec) {
     }
 
     for (const stop of parameters.stops) {
-        expression.push(stop[0], stop[1]);
+        expression.push(stop[0]);
+        expression.push(stop[1]);
     }
 
     return expression;

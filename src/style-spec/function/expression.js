@@ -13,20 +13,17 @@ const {
     array
 } = require('./types');
 
-/*::
-
 export interface Expression {
     key: string;
     +type: Type;
 
-    static parse(args: Array<mixed>, context: ParsingContext): ?Expression;
+    static parse(args: Array<mixed>, context: ParsingContext): ?Expression; // eslint-disable-line no-use-before-define
 
     compile(): string;
 
     serialize(): any;
     accept(Visitor<Expression>): void;
 }
-*/
 
 class ParsingError extends Error {
     key: string;
@@ -164,7 +161,7 @@ function parseExpression(expr: mixed, context: ParsingContext) : ?Expression {
         if (Expr) {
             const parsed = Expr.parse(expr, context);
             if (!parsed) return null;
-            if (context.expectedType && match(context.expectedType, parsed.type, context)) {
+            if (context.expectedType && checkSubtype(context.expectedType, parsed.type, context)) {
                 return null;
             } else {
                 return parsed;
@@ -189,7 +186,7 @@ function parseExpression(expr: mixed, context: ParsingContext) : ?Expression {
  *
  * @private
  */
-function match(
+function checkSubtype(
     expected: Type,
     t: Type,
     context?: ParsingContext
@@ -211,7 +208,7 @@ function match(
         ];
 
         for (const memberType of members) {
-            if (!match(memberType, t)) {
+            if (!checkSubtype(memberType, t)) {
                 return null;
             }
         }
@@ -224,7 +221,7 @@ function match(
         return error;
     } else if (expected.kind === 'array') {
         if (t.kind === 'array') {
-            const itemError = match(expected.itemType, t.itemType);
+            const itemError = checkSubtype(expected.itemType, t.itemType);
             if (itemError) {
                 error = `${error} (${itemError})`;
                 if (context) context.error(error);
@@ -249,5 +246,5 @@ module.exports = {
     ParsingContext,
     ParsingError,
     parseExpression,
-    match
+    checkSubtype
 };
